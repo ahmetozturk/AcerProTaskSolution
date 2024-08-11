@@ -1,0 +1,116 @@
+﻿@model HealthCheckLogViewModel
+
+@{
+    ViewData["Title"] = "Health Check Logs";
+}
+
+    <div class="container">
+        <h2>@ViewData["Title"]</h2>
+
+        <form method="get" asp-action="Index" class="mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <label for="filterDate" class="form-label">Filter Date:</label>
+                    <input type="date" name="filterDate" id="filterDate" class="form-control" value="@Model.FilterDate.ToString("yyyy-MM-dd")" />
+                </div>
+                <div class="col-md-3">
+                    <label for="filterAppName" class="form-label">Filter App Name:</label>
+                    <input type="text" name="filterAppName" id="filterAppName" class="form-control" value="@Model.FilterAppName" />
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary mt-4">Filter</button>
+                </div>
+            </div>
+        </form>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>App Name</th>
+                    <th>App ID</th>
+                    <th>Status Code</th>
+                    <th>Error Message</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var log in Model.HealthCheckLogs)
+                {
+                    <tr>
+                        <td>@log.Id</td>
+                        <td>@log.TargetApp.Name</td>
+                        <td>@log.TargetApp.Id</td>
+                        <td>@log.StatusCode</td>
+                        <td>@log.ErrorMessage</td>
+                        <td>@log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <!-- Önceki sayfa butonu -->
+            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="?page=@(Model.CurrentPage - 1)" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <!-- İlk sayfa numarası her zaman gösterilir -->
+            <li class="page-item @(Model.CurrentPage == 1 ? "active" : "")">
+                <a class="page-link" href="?page=1">1</a>
+            </li>
+
+            <!-- İlk sayfa ve mevcut sayfa arasındaki boşluk -->
+            @if (Model.CurrentPage > 4)
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+            }
+
+            <!-- Sayfa numaraları aralığı -->
+            @for (int i = Math.Max(2, Model.CurrentPage - 2); i <= Math.Min(Model.TotalPages - 1, Model.CurrentPage + 2); i++)
+            {
+                <li class="page-item @(Model.CurrentPage == i ? "active" : "")">
+                    <a class="page-link" href="?page=@i">@i</a>
+                </li>
+            }
+
+            <!-- Son sayfa ve arada boşluk -->
+            @if (Model.CurrentPage < Model.TotalPages - 3)
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+                <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "active" : "")">
+                    <a class="page-link" href="?page=@Model.TotalPages">@Model.TotalPages</a>
+                </li>
+            }
+            else if (Model.TotalPages > 1)
+            {
+                <!-- Son sayfa gösterimi -->
+                <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "active" : "")">
+                    <a class="page-link" href="?page=@Model.TotalPages">@Model.TotalPages</a>
+                </li>
+            }
+
+            <!-- Sonraki sayfa butonu -->
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" href="?page=@(Model.CurrentPage + 1)" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+
+
+
+
+
+    </div>
+
+

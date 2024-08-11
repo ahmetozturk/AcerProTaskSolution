@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model IEnumerable<TargetApp>
+
+
+    <div class="container">
+        <h1>Target Applications</h1>
+        <a href="/TargetApp/Create" class="btn btn-primary">Add New Target App</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>URL</th>
+                    <th>Monitoring Interval</th>
+                    <th>Active</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var app in Model)
+                    {
+                        <tr>
+                            <td>@app.Name</td>
+                            <td>@app.Url</td>
+                            <td>@app.MonitoringInterval</td>
+                            <td>@app.IsActive</td>
+                            <td>
+                                <a href="/TargetApp/Edit/@app.Id" class="btn btn-warning">Edit</a>
+                                <button class="btn btn-danger" onclick="deleteTargetApp(@app.Id)">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    @section Scripts {
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            function deleteTargetApp(id) {
+                if (confirm('Are you sure you want to delete this item?')) {
+                    $.ajax({
+                        url: '@Url.Action("Delete", "TargetApp")',
+                        type: 'POST',
+                        data: { id: id },
+                        success: function (result) {
+                            if (result.success) {
+                                alert('Item deleted successfully!');
+                                location.reload(); // Sayfayı yenile
+                            } else {
+                                alert('Failed to delete the item.');
+                            }
+                        }
+                    });
+                }
+            }
+        </script>
+    }
